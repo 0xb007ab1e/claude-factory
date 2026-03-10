@@ -1,0 +1,30 @@
+name: Validate
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  permissions:
+    name: permissions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check script permissions
+        run: |
+          failed=()
+          for f in factory-*.sh; do
+            if [ ! -x "$f" ]; then
+              failed+=("$f")
+            fi
+          done
+          if [ ${#failed[@]} -gt 0 ]; then
+            echo "The following scripts are not executable:"
+            printf '  %s\n' "${failed[@]}"
+            echo "Run: chmod +x ${failed[*]}"
+            exit 1
+          fi
+          echo "All factory-*.sh scripts are executable."
