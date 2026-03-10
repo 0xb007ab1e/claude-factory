@@ -1,3 +1,4 @@
+# hadolint ignore=DL3007
 FROM claude-base:latest
 
 # versions: see apt-cache policy build-essential cmake gdb clang-format to query current

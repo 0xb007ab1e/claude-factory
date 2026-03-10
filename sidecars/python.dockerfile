@@ -1,3 +1,4 @@
+# hadolint ignore=DL3007
 FROM claude-base:latest
 
 # versions: see apt-cache policy python3 python3-pip to query current

@@ -1,3 +1,4 @@
+# hadolint ignore=DL3007
 FROM claude-base:latest
 
 # versions: see apt-cache policy nodejs npm to query current

@@ -1,3 +1,4 @@
+# hadolint ignore=DL3007
 FROM claude-base:latest
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
