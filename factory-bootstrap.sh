@@ -83,7 +83,41 @@ while true; do
 				echo "RUN apt-get update && apt-get install -y python3 && rm -rf /var/lib/apt/lists/*" > "$SIDECAR_DIR/sample.dockerfile.example"
 				fi
 				
-				# --- STAGE 4: SHELL INTEGRATION ---
+				# --- STAGE 4: GH CLI INSTALL ---
+			echo -e "\n\033[1;33m[3/3] GITHUB CLI\033[0m"
+			GH_BIN="$HOME/.local/bin/gh"
+			if command -v gh &>/dev/null || [ -x "$GH_BIN" ]; then
+				echo -e "✅ gh CLI already installed: $(gh --version 2>/dev/null | head -1)"
+			else
+				echo -n "📦 Installing gh CLI... "
+				GH_VERSION=$(curl -s https://api.github.com/repos/cli/cli/releases/latest | grep -o '"tag_name": "[^"]*"' | grep -o 'v[0-9.]*')
+				GH_TARBALL="gh_${GH_VERSION#v}_linux_amd64.tar.gz"
+				curl -sLo "/tmp/$GH_TARBALL" "https://github.com/cli/cli/releases/download/${GH_VERSION}/${GH_TARBALL}"
+				tar -xzf "/tmp/$GH_TARBALL" -C /tmp
+				mkdir -p "$HOME/.local/bin"
+				cp "/tmp/gh_${GH_VERSION#v}_linux_amd64/bin/gh" "$GH_BIN"
+				rm -rf "/tmp/$GH_TARBALL" "/tmp/gh_${GH_VERSION#v}_linux_amd64"
+				echo -e "\033[0;32mDONE ($GH_VERSION)\033[0m"
+			fi
+
+			# Add .local/bin to PATH permanently if not already present
+			if ! grep -q '\.local/bin' "$HOME/.bashrc"; then
+				echo -e '\n# Local user binaries\nexport PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
+			fi
+			export PATH="$HOME/.local/bin:$PATH"
+
+			# Authenticate gh with the provided token
+			if [ -n "$GH_TOKEN" ]; then
+				echo -n "🔑 Authenticating gh CLI... "
+				echo "$GH_TOKEN" | "$GH_BIN" auth login --hostname github.com --with-token 2>/dev/null \
+					&& echo -e "\033[0;32mDONE\033[0m" \
+					|| echo -e "\033[0;33mWARN: auth failed — run 'gh auth login' manually\033[0m"
+			fi
+
+			# Configure git credential helper
+			git config --global credential.helper "$GH_BIN auth git-credential"
+
+			# --- STAGE 5: SHELL INTEGRATION ---
 				if ! grep -q "AI FACTORY ALIASES" "$HOME/.bashrc"; then
 					cat <<EOF >> "$HOME/.bashrc"
 
@@ -97,6 +131,6 @@ while true; do
 					echo -e "\n\033[0;32m✅ SYSTEM INITIALIZED.\033[0m"
 					echo -e "\033[1;32m🔄 REFRESHING SHELL... YOU ARE READY TO GO!\033[0m\n"
 					
-					# --- STAGE 5: AUTO-SOURCE & EXECUTION ---
+					# --- STAGE 6: AUTO-SOURCE & EXECUTION ---
 					# This replaces the current shell with a new one that has the aliases loaded.
 					exec bash
