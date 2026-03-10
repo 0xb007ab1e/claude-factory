@@ -15,9 +15,10 @@ DEFAULT_GIT_EMAIL="$(git config --global user.email || echo "$USER@$(hostname)")
 while getopts "s:b:i:" opt; do
 	case $opt in
 	s) CUSTOM_SRC="$OPTARG" ;;
-b) CUSTOM_BASE="$OPTARG" ;;
-i) IMPORT_PATH="$OPTARG" ;;
-esac
+	b) CUSTOM_BASE="$OPTARG" ;;
+	i) IMPORT_PATH="$OPTARG" ;;
+	*) echo "Usage: $0 [-s src] [-b base] [-i import]" >&2; exit 1 ;;
+	esac
 done
 
 SRC_ROOT="${CUSTOM_SRC:-$DEFAULT_SRC}"
@@ -42,14 +43,14 @@ GH_USER=${GH_USER:-$GIT_NAME}
 echo -e "\n\033[1;33m[2/3] CLAUDE API CONFIGURATION\033[0m"
 while true; do
 	read -rsp "🗝️  Enter Anthropic API Key (sk-ant-...): " CLAUDE_KEY
-	history -d $(history 1) 2>/dev/null || true
+	history -d "$(history 1)" 2>/dev/null || true
 	echo
 	if [[ $CLAUDE_KEY == sk-ant-* ]]; then break
 		else echo -e "\033[0;31m❌ Invalid format. Please try again.\033[0m"; fi
 			done
 
 			read -rsp "🗝️  Enter GitHub Personal Access Token (Optional): " GH_TOKEN
-			history -d $(history 1) 2>/dev/null || true
+			history -d "$(history 1)" 2>/dev/null || true
 			echo
 			
 			# --- STAGE 3: INFRASTRUCTURE GENERATION ---

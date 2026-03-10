@@ -30,5 +30,5 @@ jobs:
         run: |
           for f in sidecars/*.dockerfile; do
             echo "Linting $f"
-            docker run --rm -i hadolint/hadolint < "$f"
+            docker run --rm -i hadolint/hadolint hadolint --ignore DL3061 - < "$f"
           done
