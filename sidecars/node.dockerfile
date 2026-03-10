@@ -1,6 +1,6 @@
 # sidecars/node.dockerfile
 # versions: see apt-cache policy nodejs npm to query current
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
 nodejs \
 npm \
 && rm -rf /var/lib/apt/lists/*
