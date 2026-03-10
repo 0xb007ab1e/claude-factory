@@ -12,7 +12,6 @@
 
 # Default values if nothing is provided
 DEFAULT_SOURCE_ROOT="$HOME/_src"
-DEFAULT_BASE_NAME="base"
 
 # Resolve Source Root (Where projects live)
 export FACTORY_SOURCE_ROOT="${FACTORY_SOURCE_ROOT:-$DEFAULT_SOURCE_ROOT}"
@@ -27,7 +26,8 @@ export FACTORY_BASE_DIR="${FACTORY_BASE_DIR:-$SCRIPT_PATH}"
 # echo "🛠  Factory Base: $FACTORY_BASE_DIR"
 
 # Detect container runtime (podman preferred over docker)
-export DOCKER_CMD=$(command -v podman 2>/dev/null || command -v docker 2>/dev/null)
+DOCKER_CMD=$(command -v podman 2>/dev/null || command -v docker 2>/dev/null)
+export DOCKER_CMD
 if [ -z "$DOCKER_CMD" ]; then
   echo "❌ ERROR: Neither podman nor docker found in PATH." >&2
   exit 1

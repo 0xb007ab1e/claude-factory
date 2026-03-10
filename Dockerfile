@@ -15,7 +15,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 # - curl: For fetching Node.js setup scripts
 # - git: Required for Claude Code to perform diffs and indexing
 # - ca-certificates: Required for secure SSL/TLS connections
-RUN apt-get update && apt-get install -y \
+# hadolint ignore=DL3008
+RUN apt-get update && apt-get install -y --no-install-recommends \
 curl \
 git \
 vim \
@@ -25,8 +26,10 @@ ca-certificates \
 # LAYER 2: Node.js Runtime
 # Claude Code is a TypeScript/Node-based CLI. We use Node 20 (LTS).
 ARG CLAUDE_VERSION=latest
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+# hadolint ignore=DL3008
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-&& apt-get install -y nodejs \
+&& apt-get install -y --no-install-recommends nodejs \
 && npm install -g @anthropic-ai/claude-code@${CLAUDE_VERSION}
 
 # LAYER 3: Environment Hardening

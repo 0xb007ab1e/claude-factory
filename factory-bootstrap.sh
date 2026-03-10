@@ -56,7 +56,7 @@ while true; do
 			mkdir -p "$SRC_ROOT" "$SIDECAR_DIR" "$HOME/.claude"
 			
 			# Generate Path Resolver
-			cat <<EOF > "$BASE_DIR/factory-config.sh"
+			cat <<-EOF > "$BASE_DIR/factory-config.sh"
 			#!/bin/bash
 			export FACTORY_SOURCE_ROOT="$SRC_ROOT"
 			export FACTORY_BASE_DIR="$BASE_DIR"
@@ -65,7 +65,7 @@ while true; do
 			
 			# Generate Global Secrets (Hardened)
 			GLOBAL_ENV="$HOME/.env.global"
-			cat <<EOF > "$GLOBAL_ENV"
+			cat <<-EOF > "$GLOBAL_ENV"
 			export GIT_AUTHOR_NAME="$GIT_NAME"
 			export GIT_AUTHOR_EMAIL="$GIT_EMAIL"
 			export GITHUB_USER="$GH_USER"
@@ -119,7 +119,7 @@ while true; do
 
 			# --- STAGE 5: SHELL INTEGRATION ---
 				if ! grep -q "AI FACTORY ALIASES" "$HOME/.bashrc"; then
-					cat <<EOF >> "$HOME/.bashrc"
+					cat <<-EOF >> "$HOME/.bashrc"
 
 					# --- AI FACTORY ALIASES ---
 					export FACTORY_SOURCE_ROOT="$SRC_ROOT"

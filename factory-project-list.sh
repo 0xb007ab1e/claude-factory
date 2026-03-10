@@ -67,7 +67,10 @@ echo "📦 GLOBAL FACTORY FOOTPRINT"
 echo "--------------------------------------------------------------------------------"
 
 # Total number of project directories
-p_count=$(ls -d "$SRC_DIR"/*/ 2>/dev/null | grep -v "/base/" | wc -l || echo 0)
+p_count=0
+for _d in "$SRC_DIR"/*/; do
+	[ "$(basename "${_d%/}")" != "base" ] && (( p_count++ )) || true
+done
 
 # Count of active containers
 c_count=$($DOCKER_CMD ps --filter "name=_dev" -q | wc -l)

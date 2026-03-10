@@ -110,12 +110,12 @@ ENV_GLOBAL="$HOME/.env.global"
 if [ -f "$ENV_GLOBAL" ]; then
     PERMS=$(stat -c "%a" "$ENV_GLOBAL" 2>/dev/null || stat -f "%OLp" "$ENV_GLOBAL" 2>/dev/null)
     if [ "$PERMS" = "600" ]; then
-        pass "~/.env.global exists and is chmod 600"
+        pass "$HOME/.env.global exists and is chmod 600"
     else
-        fail "~/.env.global exists but permissions are $PERMS (expected 600) — run: chmod 600 ~/.env.global"
+        fail "$HOME/.env.global exists but permissions are $PERMS (expected 600) — run: chmod 600 $HOME/.env.global"
     fi
 else
-    fail "~/.env.global not found — run factory-env-init.sh to create it"
+    fail "$HOME/.env.global not found — run factory-env-init.sh to create it"
 fi
 
 # ==============================================================================
@@ -148,9 +148,9 @@ section "Check 5: ~/.claude/config.json"
 
 CLAUDE_CONFIG="$HOME/.claude/config.json"
 if [ -f "$CLAUDE_CONFIG" ]; then
-    pass "~/.claude/config.json exists"
+    pass "$HOME/.claude/config.json exists"
 else
-    fail "~/.claude/config.json not found — Claude CLI may not be configured on this host"
+    fail "$HOME/.claude/config.json not found — Claude CLI may not be configured on this host"
 fi
 
 # ==============================================================================
