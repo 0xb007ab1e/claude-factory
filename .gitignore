@@ -1,0 +1,22 @@
+# Secrets — never commit these
+.env
+.env.*
+*.env
+~/.env.global
+
+# Generated project docker-compose files
+../**/docker-compose.yml
+!base/
+
+# Docker artifacts
+*.tar
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Editor artifacts
+.vscode/
+.idea/
+*.swp
+*.swo
