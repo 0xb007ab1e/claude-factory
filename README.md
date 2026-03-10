@@ -1,5 +1,7 @@
 # Claude Factory: Agentic Dev Environment
 
+**https://github.com/0xb007ab1e/claude-factory**
+
 Automates the creation of isolated, language-specific development containers optimized for the Claude Code AI agent. Uses a **Core + Sidecar** architecture to keep images lean while supporting polyglot development.
 
 ---
