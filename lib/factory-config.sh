@@ -18,7 +18,7 @@ export FACTORY_SOURCE_ROOT="${FACTORY_SOURCE_ROOT:-$DEFAULT_SOURCE_ROOT}"
 
 # Resolve Framework Base (Where these scripts live)
 # This uses the script's own location as a fallback to ensure it's "self-aware"
-SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export FACTORY_BASE_DIR="${FACTORY_BASE_DIR:-$SCRIPT_PATH}"
 
 # Verbose logging for debugging (can be silenced)

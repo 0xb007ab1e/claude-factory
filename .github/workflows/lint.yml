@@ -25,10 +25,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: hadolint/hadolint-action@v3.1.0
         with:
-          dockerfile: Dockerfile
+          dockerfile: docker/Dockerfile
       - name: Lint sidecar Dockerfiles
         run: |
-          for f in sidecars/*.dockerfile; do
+          for f in docker/sidecars/*.dockerfile; do
             echo "Linting $f"
             docker run --rm -i hadolint/hadolint < "$f"
           done

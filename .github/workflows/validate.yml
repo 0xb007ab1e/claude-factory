@@ -16,7 +16,7 @@ jobs:
       - name: Check script permissions
         run: |
           failed=()
-          for f in factory-*.sh; do
+          for f in bin/factory-*.sh; do
             if [ ! -x "$f" ]; then
               failed+=("$f")
             fi
@@ -27,4 +27,4 @@ jobs:
             echo "Run: chmod +x ${failed[*]}"
             exit 1
           fi
-          echo "All factory-*.sh scripts are executable."
+          echo "All bin/factory-*.sh scripts are executable."

@@ -17,7 +17,7 @@ USER_BASE=${USER_BASE:-$USER_SRC/base}
 
 # Ensure directories exist
 mkdir -p "$USER_SRC"
-mkdir -p "$USER_BASE/sidecars"
+mkdir -p "$USER_BASE/docker/sidecars"
 
 # Write preferences to the Global Env
 GLOBAL_ENV="$HOME/.env.global"

@@ -23,7 +23,7 @@ done
 
 SRC_ROOT="${CUSTOM_SRC:-$DEFAULT_SRC}"
 BASE_DIR="${CUSTOM_BASE:-$DEFAULT_BASE}"
-SIDECAR_DIR="$BASE_DIR/sidecars"
+SIDECAR_DIR="$BASE_DIR/docker/sidecars"
 
 echo -e "\n\033[0;34m================================================================\033[0m"
 echo -e "\033[0;34m🛡️  AI FACTORY: FULL SYSTEM ONBOARDING\033[0m"
@@ -57,7 +57,7 @@ while true; do
 			mkdir -p "$SRC_ROOT" "$SIDECAR_DIR" "$HOME/.claude"
 			
 			# Generate Path Resolver
-			cat <<-EOF > "$BASE_DIR/factory-config.sh"
+			cat <<-EOF > "$BASE_DIR/lib/factory-config.sh"
 			#!/bin/bash
 			export FACTORY_SOURCE_ROOT="$SRC_ROOT"
 			export FACTORY_BASE_DIR="$BASE_DIR"
@@ -125,7 +125,7 @@ while true; do
 					# --- AI FACTORY ALIASES ---
 					export FACTORY_SOURCE_ROOT="$SRC_ROOT"
 					export FACTORY_BASE_DIR="$BASE_DIR"
-					source "\$FACTORY_BASE_DIR/factory-aliases.sh"
+					source "\$FACTORY_BASE_DIR/bin/factory-aliases.sh"
 					EOF
 					fi
 					

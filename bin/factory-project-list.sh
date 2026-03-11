@@ -11,10 +11,9 @@ set -euo pipefail
 
 # --- STAGE 1: PATH RESOLUTION ---
 # Identifies the root source directory relative to the script's location.
-BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SRC_DIR="$(cd "$BASE_DIR/.." && pwd)"
-
-source "$(dirname "${BASH_SOURCE[0]}")/factory-config.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/factory-config.sh"
+SRC_DIR="$FACTORY_SOURCE_ROOT"
 
 # --- STAGE 2: UI HEADER ---
 echo "================================================================================"

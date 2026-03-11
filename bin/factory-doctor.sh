@@ -26,10 +26,10 @@ FAIL_COUNT=0
 
 # --- SOURCE FACTORY CONFIG ---
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-if [ -f "$SCRIPT_DIR/factory-config.sh" ]; then
-    source "$SCRIPT_DIR/factory-config.sh"
+if [ -f "$SCRIPT_DIR/../lib/factory-config.sh" ]; then
+    source "$SCRIPT_DIR/../lib/factory-config.sh"
 else
-    echo -e "${RED}ERROR:${RESET} Cannot find factory-config.sh at $SCRIPT_DIR. Aborting."
+    echo -e "${RED}ERROR:${RESET} Cannot find factory-config.sh at $SCRIPT_DIR/../lib. Aborting."
     exit 1
 fi
 
@@ -158,7 +158,7 @@ fi
 # ==============================================================================
 section "Check 6: Sidecars directory"
 
-SIDECARS_DIR="${FACTORY_BASE_DIR}/sidecars"
+SIDECARS_DIR="${FACTORY_BASE_DIR}/docker/sidecars"
 if [ -d "$SIDECARS_DIR" ]; then
     SIDECAR_COUNT=$(find "$SIDECARS_DIR" -maxdepth 1 -type f | wc -l)
     if [ "$SIDECAR_COUNT" -gt 0 ]; then
@@ -180,7 +180,7 @@ while IFS= read -r -d '' script; do
     if [ ! -x "$script" ]; then
         NON_EXEC+=("$(basename "$script")")
     fi
-done < <(find "$FACTORY_BASE_DIR" -maxdepth 1 -name "factory-*.sh" -print0)
+done < <(find "$FACTORY_BASE_DIR/bin" -maxdepth 1 -name "factory-*.sh" -print0)
 
 if [ "${#NON_EXEC[@]}" -eq 0 ]; then
     pass "All factory-*.sh scripts are executable"

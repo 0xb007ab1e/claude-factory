@@ -14,7 +14,7 @@ set -euo pipefail
 # Ensures the script can be executed from any directory while correctly
 # locating the 'Dockerfile' sibling file.
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$(dirname "${BASH_SOURCE[0]}")/factory-config.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/factory-config.sh"
 
 CLAUDE_VERSION=${1:-latest}
 
@@ -31,8 +31,8 @@ echo "🔄 Rebuilding Claude Base Image (claude-base:latest)..."
 $DOCKER_CMD build --no-cache \
 --build-arg CLAUDE_VERSION=${CLAUDE_VERSION} \
 -t claude-base:latest \
--f "$BASE_DIR/Dockerfile" \
-"$BASE_DIR"
+-f "$FACTORY_BASE_DIR/docker/Dockerfile" \
+"$FACTORY_BASE_DIR/docker"
 
 # --- STAGE 3: VERIFICATION ---
 if [ $? -eq 0 ]; then

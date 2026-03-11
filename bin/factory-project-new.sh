@@ -15,8 +15,8 @@ set -euo pipefail
 
 # --- STAGE 0: EARLY FLAG HANDLING ---
 # Source config first so SIDECARS_DIR is available for --list-templates
-source "$(dirname "$0")/factory-config.sh"
-SIDECARS_DIR="${FACTORY_BASE_DIR}/sidecars"
+source "$(dirname "$0")/../lib/factory-config.sh"
+SIDECARS_DIR="${FACTORY_BASE_DIR}/docker/sidecars"
 
 if [ "${1:-}" = "--list-templates" ]; then
 	echo "Available templates:"
@@ -40,7 +40,7 @@ done
 # --- STAGE 2: RESOLVE PATHS AND APPLY DEFAULTS ---
 SOURCE_ROOT="${CUSTOM_SOURCE:-$FACTORY_SOURCE_ROOT}"
 BASE_DIR="${CUSTOM_BASE:-$FACTORY_BASE_DIR}"
-SIDECARS_DIR="$BASE_DIR/sidecars"
+SIDECARS_DIR="$BASE_DIR/docker/sidecars"
 
 # Default template
 TEMPLATE="${TEMPLATE:-node}"

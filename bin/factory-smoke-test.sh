@@ -14,8 +14,9 @@ set -euo pipefail
 
 # --- STAGE 1: ENVIRONMENT RESOLUTION ---
 # Ensure we have the factory paths loaded
-if [ -f "$HOME/_src/base/factory-config.sh" ]; then
-	source "$HOME/_src/base/factory-config.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$SCRIPT_DIR/../lib/factory-config.sh" ]; then
+	source "$SCRIPT_DIR/../lib/factory-config.sh"
 	source "$HOME/.env.global"
 else
 	echo "❌ ERROR: Factory not initialized. Run factory-bootstrap.sh first."

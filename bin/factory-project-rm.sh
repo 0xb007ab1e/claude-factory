@@ -1,5 +1,7 @@
 #!/bin/bash
 set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/factory-config.sh"
 
 # ==============================================================================
 # ARTIFACT: factory-project-rm.sh (Cleanup Utility)
@@ -22,7 +24,7 @@ if [ ! -d "$TARGET_DIR" ]; then
 	if [[ $REPLY =~ ^[Yy]$ ]]; then
 		cd "$TARGET_DIR"
 		# SECURITY: This only removes project-specific volumes, not the shared claude-config.
-		docker compose down -v --remove-orphans
+		$DOCKER_CMD compose down -v --remove-orphans
 		cd ..
 		rm -rf "$PROJECT_NAME"
 		echo "✅ Workspace $PROJECT_NAME has been neutralized."
