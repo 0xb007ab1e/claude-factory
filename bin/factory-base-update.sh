@@ -13,8 +13,7 @@ set -euo pipefail
 # --- STAGE 1: PATH RESOLUTION ---
 # Ensures the script can be executed from any directory while correctly
 # locating the 'Dockerfile' sibling file.
-BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$(dirname "${BASH_SOURCE[0]}")/../lib/factory-config.sh"
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../lib/factory-config.sh"
 
 CLAUDE_VERSION=${1:-latest}
 
