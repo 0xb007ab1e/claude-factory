@@ -10,25 +10,32 @@ Automates the creation of isolated, language-specific development containers opt
 
 ```
 _src/
-├── base/                        # This repository — the command center
-│   ├── Dockerfile               # Core base image (Ubuntu + Node.js + Claude CLI)
-│   ├── factory-bootstrap.sh     # One-time onboarding wizard
-│   ├── factory-aliases.sh       # Shell aliases (sourced from ~/.bashrc)
-│   ├── factory-config.sh        # Path resolver and runtime detection (docker/podman)
-│   ├── factory-env-init.sh      # Lightweight path-only setup (alternative to bootstrap)
-│   ├── factory-project-new.sh   # Create and launch a new project container
-│   ├── factory-project-rm.sh    # Stop and remove a project container
-│   ├── factory-project-list.sh  # Dashboard — lists all projects and their status
-│   ├── factory-base-update.sh   # Rebuild the core claude-base image
-│   ├── factory-smoke-test.sh    # Environment validation suite
-│   ├── factory-doctor.sh        # Diagnostic script — checks environment health
-│   └── sidecars/                # Language-specific Dockerfile overlays
-│       ├── node.dockerfile
-│       ├── python.dockerfile
-│       ├── go.dockerfile
-│       ├── rust.dockerfile
-│       └── cpp.dockerfile
-└── <project-name>/              # Generated project workspaces (siblings to base)
+├── base/                              # This repository — the command center
+│   ├── bin/                           # User-facing scripts (add to PATH or use aliases)
+│   │   ├── factory-bootstrap.sh       # One-time onboarding wizard
+│   │   ├── factory-aliases.sh         # Shell aliases (sourced from ~/.bashrc)
+│   │   ├── factory-env-init.sh        # Lightweight path-only setup
+│   │   ├── factory-project-new.sh     # Create and launch a new project container
+│   │   ├── factory-project-rm.sh      # Stop and remove a project container
+│   │   ├── factory-project-list.sh    # Dashboard — lists all projects and their status
+│   │   ├── factory-base-update.sh     # Rebuild the core claude-base image
+│   │   ├── factory-smoke-test.sh      # Environment validation suite
+│   │   └── factory-doctor.sh          # Diagnostic script — checks environment health
+│   ├── lib/                           # Internal library (sourced by bin/ scripts)
+│   │   └── factory-config.sh          # Path resolver and runtime detection (docker/podman)
+│   ├── docker/                        # Container image definitions
+│   │   ├── Dockerfile                 # Core base image (Ubuntu + Node.js + Claude CLI)
+│   │   └── sidecars/                  # Language-specific Dockerfile overlays
+│   │       ├── node.dockerfile
+│   │       ├── python.dockerfile
+│   │       ├── go.dockerfile
+│   │       ├── rust.dockerfile
+│   │       └── cpp.dockerfile
+│   └── platforms/                     # OS-specific installers
+│       ├── linux/install.sh
+│       ├── macos/install.sh
+│       └── windows/install.ps1
+└── <project-name>/                    # Generated project workspaces (siblings to base)
 ```
 
 **Host files:**
@@ -42,7 +49,7 @@ _src/
 ### 1. Bootstrap (first-time setup)
 
 ```bash
-bash factory-bootstrap.sh
+bash bin/factory-bootstrap.sh
 ```
 
 Prompts for Git identity, Anthropic API key, and GitHub token. Generates `~/.env.global`, `~/.claude/config.json`, and adds factory aliases to `~/.bashrc`. Opens a new shell when complete.
@@ -75,16 +82,16 @@ Defined in `factory-aliases.sh` and sourced automatically from `~/.bashrc`. Edit
 
 | Alias | Script | Description |
 | :--- | :--- | :--- |
-| `mkproject` | `factory-project-new.sh` | Create and launch a new project container |
-| `rmproject` | `factory-project-rm.sh` | Stop and remove a project |
-| `lsprojects` | `factory-project-list.sh` | Dashboard of all projects |
-| `update-base` | `factory-base-update.sh` | Rebuild the core `claude-base` image |
+| `mkproject` | `bin/factory-project-new.sh` | Create and launch a new project container |
+| `rmproject` | `bin/factory-project-rm.sh` | Stop and remove a project |
+| `lsprojects` | `bin/factory-project-list.sh` | Dashboard of all projects |
+| `update-base` | `bin/factory-base-update.sh` | Rebuild the core `claude-base` image |
 
 ---
 
 ## Commands Reference
 
-### `factory-project-new.sh`
+### `bin/factory-project-new.sh`
 
 ```
 Usage: mkproject -n <name> -t <template> [-s <source_root>] [-b <base_dir>]
@@ -99,7 +106,7 @@ Usage: mkproject -n <name> -t <template> [-s <source_root>] [-b <base_dir>]
 | `-b <base_dir>` | Override the base directory |
 | `--list-templates` | Print all available sidecar templates and exit |
 
-### `factory-base-update.sh`
+### `bin/factory-base-update.sh`
 
 ```
 Usage: factory-base-update.sh [<claude-version>]
@@ -112,7 +119,7 @@ update-base              # pulls latest
 update-base 1.2.3        # pins to a specific version
 ```
 
-### `factory-smoke-test.sh`
+### `bin/factory-smoke-test.sh`
 
 ```
 Usage: factory-smoke-test.sh [--verbose]
@@ -120,12 +127,12 @@ Usage: factory-smoke-test.sh [--verbose]
 
 Spins up a temporary container, runs three checks (API key projection, read-only mount, Claude CLI presence), then self-destructs. Pass `--verbose` to stream full container output.
 
-### `factory-doctor.sh`
+### `bin/factory-doctor.sh`
 
 Checks the full environment without creating anything. Useful for diagnosing onboarding failures.
 
 ```bash
-bash factory-doctor.sh
+bash bin/factory-doctor.sh
 ```
 
 Checks: container runtime available, `claude-base:latest` image present, `~/.env.global` permissions, API key format, `~/.claude/config.json`, sidecars populated, all factory scripts executable.
@@ -146,15 +153,29 @@ Run `mkproject --list-templates` to see available templates at any time.
 
 ---
 
+## Platform Installers
+
+OS-specific prerequisite installers live in `platforms/`. Run the appropriate one before bootstrapping on a fresh machine:
+
+| Platform | Script | Notes |
+| :--- | :--- | :--- |
+| Linux | `platforms/linux/install.sh` | Detects apt / dnf / pacman |
+| macOS | `platforms/macos/install.sh` | Installs via Homebrew |
+| Windows | `platforms/windows/install.ps1` | Uses winget or scoop; requires WSL2 for containers |
+
+After the platform installer completes, run `bin/factory-bootstrap.sh` to finish setup.
+
+---
+
 ## Architecture
 
 ### Core + Sidecar
 
-The base `Dockerfile` builds a minimal Ubuntu 22.04 image with Node.js LTS and the Claude CLI. Each sidecar (`sidecars/*.dockerfile`) is a thin overlay appended at project creation time — only the tools you need are installed.
+The base `docker/Dockerfile` builds a minimal Ubuntu 22.04 image with Node.js LTS and the Claude CLI. Each sidecar (`docker/sidecars/*.dockerfile`) is a thin overlay appended at project creation time — only the tools you need are installed.
 
 ### Container Runtime
 
-`factory-config.sh` auto-detects the container runtime at shell load time, preferring `podman` over `docker`:
+`lib/factory-config.sh` auto-detects the container runtime at shell load time, preferring `podman` over `docker`:
 
 ```bash
 export DOCKER_CMD=$(command -v podman 2>/dev/null || command -v docker 2>/dev/null)
@@ -192,8 +213,8 @@ export DOCKER_HOST="unix:///run/user/$(id -u)/podman/podman.sock"
 
 ### "Factory not initialized"
 
-Run `factory-bootstrap.sh` to generate `~/.env.global` and `factory-config.sh`.
+Run `bin/factory-bootstrap.sh` to generate `~/.env.global` and `lib/factory-config.sh`.
 
 ### Environment not healthy
 
-Run `factory-doctor.sh` for a full diagnostic, then `factory-smoke-test.sh --verbose` to validate the container runtime end-to-end.
+Run `bin/factory-doctor.sh` for a full diagnostic, then `bin/factory-smoke-test.sh --verbose` to validate the container runtime end-to-end.
